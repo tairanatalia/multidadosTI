@@ -302,11 +302,48 @@
 <script src="assets/scripts/index.js" type="text/javascript"></script>
 <!-- END PAGE LEVEL SCRIPTS -->
 <script>
-jQuery(document).ready(function() {    
-   App.init(); // initlayout and core plugins
-   Index.init();
-});
+	jQuery(document).ready(function() {    
+	App.init(); // initlayout and core plugins
+	Index.init();
+	});
 </script>
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+	var infoCaixas = document.querySelectorAll('.dashboard-stat');
+
+	infoCaixas.forEach(function(button) {
+		button.addEventListener('click', function(event) {
+		event.preventDefault();
+
+		var caixa = this.closest('.dashboard-stat');
+		var classeCor = caixa.classList[1];
+
+		var tabelaSimples = document.querySelector('.portlet-body');
+		tabelaSimples.style.backgroundColor = obterCorCaixa(classeCor);
+		
+		});
+	});
+
+	/**
+	 * Função que retorna a cor, em hexadecimal, da caixa conforme nome da classe.
+	 * @param {string} classeCor - A classe de cor da caixa.
+	 * @returns {string} - A cor em hex associada à classe de caixa.
+	 */
+	function obterCorCaixa(classeCor) {
+		switch (classeCor) {
+		case 'blue':
+			return '#27a9e3';
+		case 'green':
+			return '#28b779';
+		case 'purple':
+			return '#852b99';
+		default:
+			return '#ffffff';
+		}
+	}
+	});
+</script>
+
 <!-- END JAVASCRIPTS -->
 </body>
 <!-- END BODY -->
