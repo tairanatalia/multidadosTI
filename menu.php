@@ -79,7 +79,7 @@
                         echo '</ul>';
                         echo '</li>';
                     } else {
-                        echo '<li>';
+                        echo '<li class="start active ">';
                         echo '<a href="#">';
                         echo '<i class="fa fa-home"></i>';
                         echo '<span class="title">'. $categorias .'</span>';
