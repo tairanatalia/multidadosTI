@@ -90,6 +90,15 @@
 			<!-- END PAGE HEADER-->
 			<!-- BEGIN DASHBOARD STATS -->
 			<div class="row">
+				<?php
+					include('DataRequest.php');
+
+					$dtRequest = new DataRequest;
+
+					$qtdClientes = $dtRequest->dadosClientes('c');
+					$qtdUsuarios = $dtRequest->dadosUsuarios('c');		
+					$qtdFornecedores = $dtRequest->dadosFornecedores('c');
+				?>
 				<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
 					<div class="dashboard-stat blue">
 						<div class="visual">
@@ -97,7 +106,7 @@
 						</div>
 						<div class="details">
 							<div class="number">
-								 1349
+								<?php echo $qtdClientes; ?>
 							</div>
 							<div class="desc">
 								 Clientes
@@ -115,7 +124,7 @@
 						</div>
 						<div class="details">
 							<div class="number">
-								549
+								<?php echo $qtdUsuarios ?>
 							</div>
 							<div class="desc">
 								Usuários
@@ -133,7 +142,7 @@
 						</div>
 						<div class="details">
 							<div class="number">
-								89
+								<?php echo $qtdFornecedores ?>
 							</div>
 							<div class="desc">
 								Fornecedores
