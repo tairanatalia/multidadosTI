@@ -89,16 +89,16 @@
 			</div>
 			<!-- END PAGE HEADER-->
 			<!-- BEGIN DASHBOARD STATS -->
+			<?php
+				include('DataRequest.php');
+
+				$dataRequest = new DataRequest;
+
+				$qtdClientes = $dataRequest->dadosClientes('c');
+				$qtdUsuarios = $dataRequest->dadosUsuarios('c');		
+				$qtdFornecedores = $dataRequest->dadosFornecedores('c');
+			?>
 			<div class="row">
-				<?php
-					include('DataRequest.php');
-
-					$dtRequest = new DataRequest;
-
-					$qtdClientes = $dtRequest->dadosClientes('c');
-					$qtdUsuarios = $dtRequest->dadosUsuarios('c');		
-					$qtdFornecedores = $dtRequest->dadosFornecedores('c');
-				?>
 				<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
 					<div class="dashboard-stat blue">
 						<div class="visual">
@@ -112,7 +112,7 @@
 								 Clientes
 							</div>
 						</div>
-						<a class="more" href="#">
+						<a class="more" href="#" id="btnClientes">
 						Visualizar <i class="m-icon-swapright m-icon-white"></i>
 						</a>
 					</div>
@@ -130,7 +130,7 @@
 								Usuários
 							</div>
 						</div>
-						<a class="more" href="#">
+						<a class="more" href="#" id="btnUsuarios">
 						Visualizar <i class="m-icon-swapright m-icon-white"></i>
 						</a>
 					</div>
@@ -148,7 +148,7 @@
 								Fornecedores
 							</div>
 						</div>
-						<a class="more" href="#">
+						<a class="more" href="#" id="btnFornecedores">
 						Visualizar <i class="m-icon-swapright m-icon-white"></i>
 						</a>
 					</div>
@@ -195,7 +195,7 @@
 									</th>
 								</tr>
 								</thead>
-								<tbody>
+								<tbody id="tbBody">
 								<tr>
 									<td>
 										1
@@ -308,42 +308,92 @@
 	});
 </script>
 <script>
-	document.addEventListener("DOMContentLoaded", function() {
-	var infoCaixas = document.querySelectorAll('.dashboard-stat');
+		$(document).ready(function() {
+		// Evento de clique nos botões específicos
+		$('#btnClientes, #btnUsuarios, #btnFornecedores').on('click', function(event) {
+			event.preventDefault();
 
-	infoCaixas.forEach(function(button) {
-		button.addEventListener('click', function(event) {
-		event.preventDefault();
-
-		var caixa = this.closest('.dashboard-stat');
-		var classeCor = caixa.classList[1];
-
-		var tabelaSimples = document.querySelector('.portlet-body');
-		tabelaSimples.style.backgroundColor = obterCorCaixa(classeCor);
-		
+			// Determina a cor com base no ID do botão
+			var cor = obterCorBotao(this.id);
+			
+			// Aplica a cor à tabela
+			$('.portlet-body').css('background-color', cor);
 		});
-	});
 
-	/**
-	 * Função que retorna a cor, em hexadecimal, da caixa conforme nome da classe.
-	 * @param {string} classeCor - A classe de cor da caixa.
-	 * @returns {string} - A cor em hex associada à classe de caixa.
-	 */
-	function obterCorCaixa(classeCor) {
-		switch (classeCor) {
-		case 'blue':
-			return '#27a9e3';
-		case 'green':
-			return '#28b779';
-		case 'purple':
-			return '#852b99';
-		default:
-			return '#ffffff';
+		// Função para determinar a cor com base no ID do botão
+		function obterCorBotao(botaoId) {
+			switch (botaoId) {
+				case 'btnClientes':
+					return '#27a9e3'; // Azul
+				case 'btnUsuarios':
+					return '#28b779'; // Verde
+				case 'btnFornecedores':
+					return '#852b99'; // Roxo
+				default:
+					return '#ffffff'; // Branco
+			}
 		}
-	}
 	});
 </script>
+<script>
 
+$(document).ready(function() {
+    $(document).on('click', '#btnClientes, #btnUsuarios, #btnFornecedores', function(event) {
+        event.preventDefault();
+        var tipo = $(this).attr('id').replace('btn', ''); 
+		atualizarCabecalhoTabela(tipo);
+        atualizarTabela(tipo);
+		
+    });
+
+	function atualizarCabecalhoTabela(tipo) {
+        var thead = $('#tbBody').closest('table').find('thead');
+        thead.empty();
+
+        var cabecalho = '<tr><th>#</th><th>Nome</th><th>CPF</th>';
+
+        if (tipo === 'Clientes')
+			cabecalho += '<th>Endereço</th><th>Telefone</th><th>Email</th>';
+        if (tipo === 'Usuarios')
+			cabecalho += '<th>Endereço</th><th>Telefone</th><th>Usuário</th>';
+        if (tipo === 'Fornecedores')
+			cabecalho += '<th>Cidade</th><th>Email</th>';
+
+        cabecalho += '</tr>';
+        thead.append(cabecalho);
+    }
+
+    function atualizarTabela(tipo) {
+        $.ajax({
+            type: 'POST',
+            url: 'ajaxHandler.php',
+            data: { tipo: tipo },
+            dataType: 'json',
+            success: function(data) {
+
+                if (data !== null && Array.isArray(data) && data.length > 0) {
+                    var tabela = $('#tbBody');
+                    tabela.empty();
+
+                    data.forEach(function(item, index) {
+                        var row = '<tr>' +
+                            '<td>' + (index + 1) + '</td>' +
+                            '<td>' + item.nome + '</td>' +
+                            '<td>' + item.cpf + '</td>';
+                        if (item.endereco) row += '<td>' + item.endereco + '</td>';
+                        if (item.telefone) row += '<td>' + item.telefone + '</td>';
+						if (tipo === 'Fornecedores' && item.cidade) row += '<td>' + item.cidade + '</td>';
+						if (tipo === 'Usuarios' && item.usuario) row += '<td>' + item.usuario + '</td>';
+                        if (item.email) row += '<td>' + item.email + '</td>' +
+                            '</tr>';
+                        tabela.append(row);
+                    });
+                }
+            }
+        });
+    }
+});
+</script>
 <!-- END JAVASCRIPTS -->
 </body>
 <!-- END BODY -->
