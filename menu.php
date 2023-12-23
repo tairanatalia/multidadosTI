@@ -15,12 +15,7 @@
             "Produtos"
         ));
 
-    /**
-     * Essa função ordena as categorias e subcategorias
-     * 
-     * @param array $categoriasMenu array com as categorias e subcategorias
-     * @return $categoriasMenu array com categorias e subcategorias ordenadas em ordem alfabética
-     */
+
     function ordemAlfabetica(array $categoriasMenu) : array
     {
         ksort($categoriasMenu);
