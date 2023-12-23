@@ -309,28 +309,24 @@
 </script>
 <script>
 		$(document).ready(function() {
-		// Evento de clique nos botões específicos
 		$('#btnClientes, #btnUsuarios, #btnFornecedores').on('click', function(event) {
 			event.preventDefault();
 
-			// Determina a cor com base no ID do botão
 			var cor = obterCorBotao(this.id);
 			
-			// Aplica a cor à tabela
 			$('.portlet-body').css('background-color', cor);
 		});
 
-		// Função para determinar a cor com base no ID do botão
 		function obterCorBotao(botaoId) {
 			switch (botaoId) {
 				case 'btnClientes':
-					return '#27a9e3'; // Azul
+					return '#27a9e3';
 				case 'btnUsuarios':
-					return '#28b779'; // Verde
+					return '#28b779';
 				case 'btnFornecedores':
-					return '#852b99'; // Roxo
+					return '#852b99';
 				default:
-					return '#ffffff'; // Branco
+					return '#ffffff';
 			}
 		}
 	});
